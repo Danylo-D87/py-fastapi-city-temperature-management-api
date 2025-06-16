@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from app.core.config import Base
+from database import Base
 
 
 class City(Base):

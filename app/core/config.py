@@ -1,12 +1,14 @@
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.ext.asyncio import create_async_engine
+from pydantic import BaseSettings
 
 
-SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./library.db"
+class Settings(BaseSettings):
+    app_name: str = "FastAPI City Temperature Management API"
 
-engine = create_async_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False},
-)
+    SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./library.db"
 
-Base = declarative_base()
+    class Config:
+        case_sensitive = True
+        env_file = ".env"
+
+
+settings = Settings()

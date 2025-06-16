@@ -9,7 +9,7 @@ from sqlalchemy import (
     DateTime,
 )
 
-from app.core.config import Base
+from database import Base
 
 
 class Temperature(Base):
