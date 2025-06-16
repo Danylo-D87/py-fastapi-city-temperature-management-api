@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, Depends
+from fastapi.openapi.models import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -41,4 +42,6 @@ async def delete_city(
         city_id: int,
         db: AsyncSession = Depends(get_db)
 ):
-    return await crud.delete_city(db, city_id)
+    await crud.delete_city(db, city_id)
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -25,7 +25,9 @@ async def get_temperature_with_city_id(db: AsyncSession , city_id: int):
         )
 
     result = await db.execute(select(Temperature).where(Temperature.city_id == city_id))
-    return result.scalars().all()
+    temperatures = result.scalars().all()
+
+    return temperatures
 
 
 async def create_temperature_record(db: AsyncSession, temp_data: TemperatureCreateSchema) -> Temperature:
