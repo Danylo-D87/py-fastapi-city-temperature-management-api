@@ -46,11 +46,10 @@ async def delete_city(db: AsyncSession, city_id: int):
     city_to_delete = await db.get(City, city_id)
 
     if not city_to_delete:
-        if not city_to_delete:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"City with id {city_id} not found"
-            )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"City with id {city_id} not found"
+        )
 
     try:
         await db.delete(city_to_delete)
@@ -62,4 +61,4 @@ async def delete_city(db: AsyncSession, city_id: int):
             detail=f"Error deleting city: {e}"
         )
 
-        return {"message": f"City with id {city_id} deleted successfully"}
+    return {"message": f"City with id {city_id} deleted successfully"}
