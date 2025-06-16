@@ -1,5 +1,4 @@
 from datetime import datetime, UTC
-from typing import List
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
