@@ -1,5 +1,3 @@
-from datetime import datetime, UTC
-
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -79,7 +77,7 @@ async def fetch_and_store_temperatures(db: AsyncSession):
 
             temp_record_data = TemperatureCreateSchema(
                 city_id=city_obj.id,
-                date_time=datetime.now(UTC),
+                date_time=temp_data.date_time,
                 temperature=current_temp
             )
 

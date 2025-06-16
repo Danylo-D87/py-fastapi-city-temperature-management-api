@@ -1,9 +1,8 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi.openapi.models import Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
 
 from core.dependencies import get_db
 from schemas import city
@@ -36,6 +35,7 @@ async def create_city(
 
 @router.delete(
     "/{city_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a city by ID",
 )
 async def delete_city(
