@@ -1,18 +1,23 @@
+from datetime import datetime, timezone
+
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.city import City
-from models.temperature import Temperature
-from schemas.temperature import TemperatureCreateSchema
+from app.models.city import City
+from app.models.temperature import Temperature
+from app.schemas.temperature import TemperatureCreateSchema
 
 
-async def get_all_temperatures(db: AsyncSession ):
+async def get_all_temperatures(db: AsyncSession):
+    """
+    Отримує список усіх записів температури з бази даних.
+    """
     result = await db.execute(select(Temperature))
     return result.scalars().all()
 
 
-async def get_temperature_with_city_id(db: AsyncSession , city_id: int):
+async def get_temperature_with_city_id(db: AsyncSession, city_id: int):
 
     city = await db.get(City, city_id)
 
@@ -25,11 +30,16 @@ async def get_temperature_with_city_id(db: AsyncSession , city_id: int):
     result = await db.execute(select(Temperature).where(Temperature.city_id == city_id))
     temperatures = result.scalars().all()
 
+    if not temperatures:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No temperature records found for city with id {city_id}"
+        )
+
     return temperatures
 
 
 async def create_temperature_record(db: AsyncSession, temp_data: TemperatureCreateSchema) -> Temperature:
-
     city_exists = await db.get(City, temp_data.city_id)
     if not city_exists:
         raise HTTPException(
@@ -58,8 +68,8 @@ async def create_temperature_record(db: AsyncSession, temp_data: TemperatureCrea
 
 async def fetch_and_store_temperatures(db: AsyncSession):
 
-    all_cities = await db.execute(select(City))
-    cities = all_cities.scalars().all()
+    all_cities_result = await db.execute(select(City))
+    cities = all_cities_result.scalars().all()
 
     if not cities:
         return {"message": "No cities found in the database to fetch temperatures for."}
@@ -67,17 +77,11 @@ async def fetch_and_store_temperatures(db: AsyncSession):
     fetched_data = []
     for city_obj in cities:
         try:
-            # Тут має бути виклик до зовнішнього API
-            # Наприклад:
-            # async with aiohttp.ClientSession() as session:
-            #     async with session.get(f"YOUR_WEATHER_API_URL?city={city_obj.name}") as response:
-            #         response.json() -> parse temperature
-            # Приклад заглушки:
             current_temp = 20.0 + (city_obj.id * 0.5) # Заглушка, змінити на реальний виклик API
 
             temp_record_data = TemperatureCreateSchema(
                 city_id=city_obj.id,
-                date_time=temp_data.date_time,
+                date_time=datetime.now(timezone.utc),
                 temperature=current_temp
             )
 

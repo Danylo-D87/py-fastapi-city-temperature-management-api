@@ -14,3 +14,7 @@ class CityCreateSchema(CityBaseSchema):
 
 class CityReadSchema(CityBaseSchema):
     id: int
+
+
+class MessageResponse(BaseModel):
+    message: str

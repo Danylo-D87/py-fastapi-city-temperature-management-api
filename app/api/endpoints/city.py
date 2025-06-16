@@ -1,7 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, status
-from fastapi.openapi.models import Response
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.dependencies import get_db
@@ -42,6 +41,12 @@ async def delete_city(
         city_id: int,
         db: AsyncSession = Depends(get_db)
 ):
-    await crud.delete_city(db, city_id)
+    existing_city = await db.get(crud.City, city_id)
+    if not existing_city:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"City with id {city_id} not found"
+        )
 
+    await crud.delete_city(db, city_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
